@@ -35,3 +35,20 @@
     overflow: auto;
   }
 }
+
+.red,
+.yellow {
+  border: 1px solid black;
+  padding: 20px;
+  margin: 20px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}

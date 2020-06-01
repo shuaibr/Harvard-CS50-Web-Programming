@@ -30,18 +30,36 @@
     ></script>
   </head>
   <!-- Header -->
-  <header id="menu">
-    <div>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/portfolio">Portfolio</a></li>
-        <li><a href="/thoughts">Thoughts</a></li>
-        <!-- <li><a href="gallery.html">Gallery</a></li> -->
-      </ul>
-    </div>
+  <header id="container">
+      <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
+          <a class="navbar-brand" href="/">Shuaibr</a>
+          <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navb" aria-expanded="true">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div id="navb" class="navbar-collapse collapse hide">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="#">Portfolio</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Thoughts</a>
+              </li>
+            </ul>
+        
+            <ul class="nav navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/registration"><span class="fas fa-user"></span> Sign Up</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/login"><span class="fas fa-sign-in-alt"></span> Login</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
   </header>
 
   <body>
+    
     <!-- Main -->
     <p class="container mx-md-n5 "><h1 class = "px-md-5 text-primary">{%block heading %} {% endblock %}</h1></p>
     <div class="container">

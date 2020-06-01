@@ -38,3 +38,13 @@ def thoughts():
 @app.route("/portfolio")
 def portfolio():
     return render_template("portfolio.html")
+
+
+@app.route("/login")
+def login():
+    return render_template("/login.html")
+
+
+@app.route("/registration")
+def registration():
+    return render_template("/registration.html")

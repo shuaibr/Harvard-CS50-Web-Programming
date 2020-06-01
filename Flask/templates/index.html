@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+
+{% block heading %}
+{{headline}}, is it New Year?
+{%endblock%}
+
+
+{% block body %}
+    
+    <style>
+      body {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% if ny %}
+    <h2>Yes! Happy New Year!</h2>
+    {% else %}
+    <h2>NO</h2>
+    {% endif %}
+
+    <h3>Other holidays:</h3>
+    <ul>
+      {% for day in holi %}
+      <li><a href="{{url_for('more')}}"> {{day}} </a></li>
+      {% endfor %}
+    </ul>
+
+
+    <hr/>
+
+    <form action = "{{url_for('hello') }}" method = "post">
+      <input type="text" name = "name" placeholder = "Enter your name">
+    </form>
+
+
+    <hr/>
+    
+    <form action = "{{url_for('index') }}" method = "post">
+        <input type="text" name = "holiday" placeholder = "Enter your holiday">
+        <button> Add holidays</button>
+      </form>
+  </body>
+
+{% endblock %}

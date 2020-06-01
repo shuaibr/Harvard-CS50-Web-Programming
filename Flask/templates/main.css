@@ -1,0 +1,54 @@
+.panel {
+  padding: 2em;
+  width: 50em;
+  margin: auto;
+}
+
+#menu {
+  background-color: rgb(240, 240, 238);
+  padding: 1rem;
+  margin: 1em;
+}
+
+#menu:hover {
+  background-color: rgb(248, 242, 233);
+  color: black;
+}
+
+#menu:link {
+  color: red;
+}
+
+#thoughts {
+  margin: 5em;
+}
+
+.container.row {
+  padding: 1em;
+}
+
+@media only screen and (max-width: 700px) {
+  table {
+    background-color: lightblue;
+    margin: auto;
+    width: auto;
+    overflow: auto;
+  }
+}
+
+.red,
+.yellow {
+  border: 1px solid black;
+  padding: 20px;
+  margin: 20px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}

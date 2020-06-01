@@ -40,6 +40,11 @@ def portfolio():
     return render_template("portfolio.html")
 
 
+@app.route("/books")
+def books():
+    return render_template("/books.html")
+
+
 @app.route("/login")
 def login():
     return render_template("/login.html")

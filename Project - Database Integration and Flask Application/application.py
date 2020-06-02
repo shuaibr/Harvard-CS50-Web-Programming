@@ -85,5 +85,28 @@ def search():
         # # print(author, title, pub_year, isbn)
         books_array.append([author, title, pub_year, goodreads_id])
 
-    print("books array: ", books_array)
+    # print("books array: ", books_array)
     return render_template("/search.html", search=search, results=books_array)
+
+
+@app.route("/bookpage", methods=["GET", "POST"])
+def bookpage():
+    info = request.form.get("info")
+    print("INFO ID: ", info)
+    isbn = 0
+    result = 0
+    isbn_res = requests.get("https://www.goodreads.com/book/show.xml", params={
+                            "key": "BgzQ9doaTztk9S8YBTVefg", "id": str(info)})
+    iroot = ET.fromstring(isbn_res.content)
+    isbn = iroot[1][3].text
+    title = iroot[1][1].text
+    pub_year = iroot[1][10].text
+    author = iroot[1][26][0][1].text
+    num_ratings = iroot[1][22].text
+    avg_ratings = iroot[1][18].text
+    img = iroot[1][8].text
+
+    result = [author, title, pub_year, isbn, num_ratings, avg_ratings, img]
+    print("RESULT: ", result)
+
+    return render_template("/bookpage.html", search=search, book_info=result)

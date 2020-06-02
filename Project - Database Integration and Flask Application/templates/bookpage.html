@@ -1,52 +1,38 @@
-{% extends "layout.html" %} {% block heading %} Bookpage {% endblock %} {% block
-body %}
+{% extends "layout.html" %} {% block heading %} Bookpage for {{book_info[1]}} {%
+endblock %} {% block body %}
 <!-- Main -->
 <section>
-  <h4>Table</h4>
-  <h5>Default</h5>
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Item One</td>
-          <td>Ante turpis integer aliquet porttitor.</td>
-          <td>29.99</td>
-        </tr>
-        <tr>
-          <td>Item Two</td>
-          <td>Vis ac commodo adipiscing arcu aliquet.</td>
-          <td>19.99</td>
-        </tr>
-        <tr>
-          <td>Item Three</td>
-          <td>Morbi faucibus arcu accumsan lorem.</td>
-          <td>29.99</td>
-        </tr>
-        <tr>
-          <td>Item Four</td>
-          <td>Vitae integer tempus condimentum.</td>
-          <td>19.99</td>
-        </tr>
-        <tr>
-          <td>Item Five</td>
-          <td>Ante turpis integer aliquet porttitor.</td>
-          <td>29.99</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2"></td>
-          <td>100.00</td>
-        </tr>
-      </tfoot>
-    </table>
+  <div class="container-sm p-5 m-5 bg-dark text-white">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="col-sm-12">
+          <div class="col-md-12 col-sm-8 text">
+            <h4><strong>Book Title: </strong> {{book_info[1]}}</h4>
+            <p><strong>Author:</strong> {{book_info[0]}}</p>
+            <p><strong>Date Published: </strong> {{book_info[2]}}</p>
+            <p><strong>ISBN: </strong> {{book_info[3]}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-right">
+        <div class="col-md-12 col-sm-4 emphasis">
+          <h2><strong> {{book_info[4]}} </strong></h2>
+          <p><small>Total Number of Ratings</small></p>
+        </div>
+        <div class="col-md-12 col-sm-4 emphasis">
+          <h2><strong>{{book_info[5]}}</strong></h2>
+          <p><small>Average Rating</small></p>
+        </div>
+      </div>
+      <div class="col-md-2 text-right">
+        <img
+          src="{{book_info[6]}}"
+          class="img-responsive mx-auto fit"
+          alt="..."
+        />
+      </div>
+    </div>
   </div>
 </section>
+
 {% endblock %}

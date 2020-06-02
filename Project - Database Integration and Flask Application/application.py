@@ -4,6 +4,8 @@ from flask_session import Session
 from flask import Flask, session, render_template, request
 import os
 import requests
+import xml.etree.ElementTree as ET
+
 res = requests.get("https://www.goodreads.com/book/review_counts.json",
                    params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": "9781632168146"})
 print(res.json())
@@ -58,6 +60,26 @@ def registration():
 @app.route("/bookpage", methods=["GET", "POST"])
 def bookpage():
     search = request.form.get("search")
-    res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                       params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": str(search)})
-    return render_template("/bookpage.html", search=search, result=res.json())
+    if search.isnumeric():
+        res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                           params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": str(search)})
+    else:
+        res = requests.get(" https://www.goodreads.com/search/index.xml",
+                           params={"key": "BgzQ9doaTztk9S8YBTVefg", "q": str(search)})
+        # tree = res.content
+        # root = ET.fromstring(tree)
+        # print(tree)
+        # print("RoooT \n\n", root)
+        # for child in root.iter('*'):
+        #     print(child.tag, child.attrib)
+        #     print("space\n")
+
+        tree = res.content
+        root = ET.fromstring(tree)
+        # print(root.tag, root.attrib)
+
+        # print(root)
+        for child in root.iter("*"):
+            print(child.tag.capitalize(), " ", child.text)
+
+    return render_template("/bookpage.html", search=search, result=tree)

@@ -60,26 +60,30 @@ def registration():
 @app.route("/bookpage", methods=["GET", "POST"])
 def bookpage():
     search = request.form.get("search")
-    if search.isnumeric():
-        res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                           params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": str(search)})
-    else:
-        res = requests.get(" https://www.goodreads.com/search/index.xml",
-                           params={"key": "BgzQ9doaTztk9S8YBTVefg", "q": str(search)})
-        # tree = res.content
-        # root = ET.fromstring(tree)
-        # print(tree)
-        # print("RoooT \n\n", root)
-        # for child in root.iter('*'):
-        #     print(child.tag, child.attrib)
-        #     print("space\n")
 
-        tree = res.content
-        root = ET.fromstring(tree)
-        # print(root.tag, root.attrib)
+    res = requests.get(" https://www.goodreads.com/search/index.xml",
+                       params={"key": "BgzQ9doaTztk9S8YBTVefg", "q": str(search)})
+    tree = res.content
+    # print("\n", tree, "\n")
+    root = ET.fromstring(tree)
+    books_array = []
+    # print(root[1][6].tag, " ", root[1][6].text)
+    result = root[1][6]
+    for child in result.iter("work"):
+        isbn = 0
+        book = child.find('best_book')
+        author = book.find('author')[1].text
+        title = book.find('title').text
+        pub_year = child.find('original_publication_year').text
+        goodreads_id = book.find('id').text
+        # isbn_res = requests.get("https://www.goodreads.com/book/show.xml", params={
+        #                         "key": "BgzQ9doaTztk9S8YBTVefg", "id": str(goodreads_id)})
+        # iroot = ET.fromstring(isbn_res.content)
+        # isbn = iroot[1][3].text
+        # # print("ISBN: ", isbn)
 
-        # print(root)
-        for child in root.iter("*"):
-            print(child.tag.capitalize(), " ", child.text)
+        # # print(author, title, pub_year, isbn)
+        books_array.append([author, title, pub_year, goodreads_id])
 
-    return render_template("/bookpage.html", search=search, result=tree)
+    print("books array: ", books_array)
+    return render_template("/bookpage.html", search=search, results=books_array)

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 from flask_session import Session
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 import os
 import requests
 res = requests.get("https://www.goodreads.com/book/review_counts.json",
@@ -25,7 +25,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
@@ -55,6 +55,9 @@ def registration():
     return render_template("/registration.html")
 
 
-@app.route("/books+<string:ISBN>")
-def bookpage(ISBN):
-    return render_template("/bookpage.html", isbn={ISBN})
+@app.route("/bookpage", methods=["GET", "POST"])
+def bookpage():
+    search = request.form.get("search")
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                       params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": str(search)})
+    return render_template("/bookpage.html", search=search, result=res.json())

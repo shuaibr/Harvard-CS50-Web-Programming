@@ -57,8 +57,8 @@ def registration():
     return render_template("/registration.html")
 
 
-@app.route("/bookpage", methods=["GET", "POST"])
-def bookpage():
+@app.route("/search", methods=["GET", "POST"])
+def search():
     search = request.form.get("search")
 
     res = requests.get(" https://www.goodreads.com/search/index.xml",
@@ -86,4 +86,4 @@ def bookpage():
         books_array.append([author, title, pub_year, goodreads_id])
 
     print("books array: ", books_array)
-    return render_template("/bookpage.html", search=search, results=books_array)
+    return render_template("/search.html", search=search, results=books_array)

@@ -1,0 +1,38 @@
+{% extends "layout.html" %} {% block heading %} Book Search {% endblock %} {%
+block body %}
+<!-- Main -->
+<section>
+  <h2>You searched for {{search}}:</h2>
+
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Author</th>
+          <th>Book Title</th>
+          <th>Date Published</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in results %}
+        <tr>
+          <td>{{row[0]}}</td>
+          <td>{{row[1]}}</td>
+          <td>{{row[2]}}</td>
+          <td>
+            <button
+              action="{{url_for('bookpage')}}"
+              method="POST"
+              type="button"
+              class="btn btn-info"
+            >
+              More Info
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

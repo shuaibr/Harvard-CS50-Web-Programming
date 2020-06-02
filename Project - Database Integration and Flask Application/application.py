@@ -53,3 +53,8 @@ def login():
 @app.route("/registration")
 def registration():
     return render_template("/registration.html")
+
+
+@app.route("/books+<string:ISBN>")
+def bookpage(ISBN):
+    return render_template("/bookpage.html", isbn={ISBN})

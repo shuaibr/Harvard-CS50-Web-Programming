@@ -57,6 +57,20 @@
                 <a class="nav-link" href="/login"><span class="fas fa-sign-in-alt"></span> Login</a>
               </li>
             </ul> -->
+            <ul class="nav navbar-nav ml-auto">
+                {% if session.logged_in is false %}
+                <li class="nav-item">
+                <a href="/logout"><span class="fas fa-user glyphicon-log-out"></span> Logout   </a>
+              </li>
+                {% else %}
+                <li class="nav-item pr-3">
+                <a href="/login"><span class="fas fa-user glyphicon-log-in"></span> Login   </a>
+              </li>
+            <li>
+                <a href="/registration"><span class="fas fa-sign-in-alt glyphicon glyphicon-pencil"></span> Sign up</a>
+              </li>
+                {% endif %}
+              </ul>
           </div>
         </nav>
   </header>
@@ -66,6 +80,7 @@
     <!-- Main -->
     <p class="container mx-md-n5 "><h1 class = "px-md-5 font-weight-light text-center">{%block heading %} {% endblock %}</h1></p>
     <div class="container">
+        <h3>{{session['username']}}</h3>
       {% block body %} {% endblock %}
     </div>
 

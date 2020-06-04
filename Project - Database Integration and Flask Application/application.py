@@ -9,8 +9,10 @@ from flask import Flask, redirect, url_for,  session, session, g, request, rende
 import os
 import psycopg2
 import requests
+import datetime
 import gc
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
+from functools import wraps
 
 res = requests.get("https://www.goodreads.com/book/review_counts.json",
                    params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": "9781632168146"})
@@ -23,8 +25,10 @@ if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+# app = Flask(__name__)
+# app.permanent_session_lifetime = datetime.timedelta(days=365)
 Session(app)
 
 # Set up database
@@ -37,6 +41,10 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    uname = session.get('logged_in')
+    print(uname)
+    print("success!",
+          session.get('username', 'logged_in'))
     return render_template("index.html")
 
 
@@ -84,14 +92,16 @@ def login():
                 "SELECT * FROM users WHERE username = '{0}'".format(username))
             check = cur.fetchone()
             print("login check: ", check)
-            if int(len(check)) == 0:
-                return render_template("registration.html", form=form, error_message="Register before loggin in!")
+            if check == None:
+                print("redirect")
+                return redirect(url_for('registration'))
             elif check[2] == password:
-                print("success!")
+
                 session['logged_in'] = True
                 session['username'] = username
+                print("success!",
+                      session['username'], session['logged_in'])
 
-                flash("You are now loggin in")
                 return redirect(url_for('index'))
             else:
                 print("invalid password!")
@@ -149,11 +159,32 @@ def registration():
                 session['username'] = username
 
                 return redirect(url_for('index'))
-        return render_template("registration.html", form=form, error_message="Register today!")
+        return render_template("registration.html", form=form, error_message="Register before logging in!")
 
     except Exception as e:
         print("ERROR EXCEPTION")
         return (str(e))
+
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("You need to login first")
+            return redirect(url_for('login'))
+
+    return wrap
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    session.clear()
+    flash("You have been logged out!")
+    gc.collect()
+    return redirect(url_for('index'))
 
 
 @app.route("/search", methods=["GET", "POST"])

@@ -1,14 +1,19 @@
+from wtforms.validators import DataRequired, Length
+from wtforms import StringField, TextField, SubmitField
+from flask_wtf import Form
+import xml.etree.ElementTree as ET
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 from flask_session import Session
-from flask import Flask, session, render_template, request
+from flask import Flask, redirect, url_for,  session, session, g, request, render_template, request, flash
 import os
+import psycopg2
 import requests
-import xml.etree.ElementTree as ET
+import gc
+from wtforms import Form, BooleanField, StringField, PasswordField, validators
 
 res = requests.get("https://www.goodreads.com/book/review_counts.json",
                    params={"key": "BgzQ9doaTztk9S8YBTVefg", "isbns": "9781632168146"})
-print(res.json())
 
 
 app = Flask(__name__)
@@ -25,6 +30,9 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -47,14 +55,105 @@ def books():
     return render_template("/books.html")
 
 
-@app.route("/login")
+class Login(Form):
+    username = TextField(
+        'Username', [validators.Length(min=4, max=20)])
+    password = PasswordField(
+        'Password', [validators.Required()])
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("/login.html")
+    try:
+
+        print("Trying: !!! ")
+        msg = "Log in to access your account"
+        print("Requesting form")
+        form = Login(request.form)
+        username = form.username.data
+        password = form.password.data
+        print("requested, gettingDB")
+        conn = psycopg2.connect(
+            "host=ec2-52-207-25-133.compute-1.amazonaws.com dbname=    dc4ua1h8pt5m05 user=pxondfbtekevjh password=eb9a343232a10bb904c71b3c94669edcaad8f15e77796d4e9f47543b885ed875")
+        print("conn established")
+        cur = conn.cursor()
+        print("dB connected")
+
+        if request.method == "POST" and form.validate():
+            data = cur.execute(
+                "SELECT * FROM users WHERE username = '{0}'".format(username))
+            check = cur.fetchone()
+            print("login check: ", check)
+            if int(len(check)) == 0:
+                return render_template("registration.html", form=form, error_message="Register before loggin in!")
+            elif check[2] == password:
+                print("success!")
+                session['logged_in'] = True
+                session['username'] = username
+
+                flash("You are now loggin in")
+                return redirect(url_for('index'))
+            else:
+                print("invalid password!")
+                msg = "Invalid password, try again!"
+
+            cur.close()
+            conn.close()
+            gc.collect()
+
+        return render_template("login.html", form=form, msg=msg)
+
+    except Exception as e:
+        return (str(e))
 
 
-@app.route("/registration")
+class Register(Form):
+    username = TextField(
+        'Username', [validators.Length(min=4, max=20)])
+    password = PasswordField(
+        'Password', [validators.Required(), validators.EqualTo('confirm', message="Passwords must match!")])
+    confirm = PasswordField(
+        'Repeat Password')
+
+
+@app.route("/registration", methods=["GET", "POST"])
 def registration():
-    return render_template("/registration.html")
+    try:
+        form = Register(request.form)
+        if request.method == "POST" and form.validate():
+            print("Connecting to DB1!")
+            username = form.username.data
+            password = form.password.data
+
+            conn = psycopg2.connect(
+                "host=ec2-52-207-25-133.compute-1.amazonaws.com dbname=    dc4ua1h8pt5m05 user=pxondfbtekevjh password=eb9a343232a10bb904c71b3c94669edcaad8f15e77796d4e9f47543b885ed875")
+            cur = conn.cursor()
+            print("Connected, attempting to query username")
+            x = cur.execute(
+                "SELECT * FROM users WHERE username = '{0}'".format(username))
+            # print("username exists check: ", x, cur.fetchall())
+            check = cur.fetchall()
+            if int(len(check)) > 0:
+                return render_template("registration.html", form=form, error_message="Username already exsits, please choose another!")
+            else:
+                cur.execute(
+                    "INSERT INTO users  (username, password) VALUES ('{0}','{1}')".format(username, password))
+                conn.commit()
+
+                flash("Thank you for registering!")
+                cur.close()
+                conn.close()
+                gc.collect()
+
+                session['logged_in'] = True
+                session['username'] = username
+
+                return redirect(url_for('index'))
+        return render_template("registration.html", form=form, error_message="Register today!")
+
+    except Exception as e:
+        print("ERROR EXCEPTION")
+        return (str(e))
 
 
 @app.route("/search", methods=["GET", "POST"])

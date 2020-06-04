@@ -1,44 +1,32 @@
 {% extends "layout.html" %} {% block title %} Login {%endblock %} {% block body
 %}
 
-<div class="container">
-  <div class="row centered-form">
-    <div class="col-md-12 col-md-8 col-md-4 col-sm-offset-2 col-md-offset-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">
-            Login to access you account
-          </h3>
-        </div>
-        <div class="panel-body">
-          <form role="form">
-            <div class="form-group">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                class="form-control input-sm"
-                placeholder="Email Address"
-              />
-            </div>
+<div class="d-flex justify-content-center align-self-center">
+  <div
+    class="panel-body w-30 m-5 py-5 justify-content-center align-self-center"
+  >
+    <h3 class="panel-title py-2">
+      {{msg}}
+    </h3>
+    {% from "_loginhelpers.html" import render_field %}
 
-            <div class="form-group">
-              <div class="form-group">
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  class="form-control input-sm"
-                  placeholder="Password"
-                />
-              </div>
-            </div>
-
-            <input type="submit" value="Login" class="btn btn-info btn-block" />
-          </form>
-        </div>
+    <form role="form" action="/login" method="post">
+      <div>
+        {{render_field(form.username)}}
       </div>
-    </div>
+
+      <div class="form-group">
+        {{render_field(form.password)}}
+      </div>
+      <input
+        type="submit"
+        value="Register"
+        class="btn btn-info btn-small span2"
+      />
+    </form>
+    {% if error %}
+    <p class="error"><strong>Error:</strong>{{error}}</p>
+    {% endif %}
   </div>
 </div>
 

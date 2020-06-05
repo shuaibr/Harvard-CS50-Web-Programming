@@ -35,6 +35,8 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://pxondfbtekevjh:eb9a343232a10bb904c71b3c94669edcaad8f15e77796d4e9f47543b885ed875@ec2-52-207-25-133.compute-1.amazonaws.com:5432/dc4ua1h8pt5m05'
+# db = SQLAlchemy(app)
 
 SECRET_KEY = "goopy"
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -42,6 +44,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # user.query.all()
     uname = session.get('logged_in')
     print(uname)
     print("success!",
@@ -62,6 +65,67 @@ def portfolio():
 @app.route("/books")
 def books():
     return render_template("/books.html")
+
+
+def getInfo(isbn):
+    result = 0
+    print("getinfo: ", isbn)
+    # response = requests.get("https://www.goodreads.com/book/isbn/ISBN?format=xml", params={
+    #                         "key": "BgzQ9doaTztk9S8YBTVefg", "isbn13": str(isbn)})
+
+    response = requests.get(" https://www.goodreads.com/search/index.xml",
+                            params={"key": "BgzQ9doaTztk9S8YBTVefg", "q": str(isbn)})
+    # new_root = ET.fromstring(response.content)
+    # isbn = new_root[1][3].text
+    # isbn13 = new_root[1][2].text
+    # # print(new_root, isbn_res.content)
+    # print("ISBN!!: ", isbn, new_root[1][2].text)
+    # title = new_root[1][1].text
+    # pub_year = new_root[1][10].text
+    # author = new_root[1][26][0][1].text
+    # num_ratings = new_root[1][22].text
+    # avg_ratings = new_root[1][18].text
+    # img = new_root[1][8].text
+
+    # ---started here
+    tree = response.content
+    root = ET.fromstring(tree)
+    books_array = []
+    # print(root[1][6].tag, " ", root[1][6].text)
+    result = root[1][6]
+    for child in result.iter("work"):
+        book = child.find('best_book')
+        author = book.find('author')[1].text
+        title = book.find('title').text
+        num_ratings = pub_year = child.find('ratings_count').text
+        avg_ratings = child.find('average_rating').text
+        pub_year = child.find('original_publication_year').text
+        goodreads_id = book.find('id').text
+
+    # ---ended here
+
+    result = [author, title, pub_year, isbn,
+              num_ratings, avg_ratings]
+    print("RESULT: ", result)
+
+    return result
+
+
+@app.route("/api/<string:isbn>", methods=["GET"])
+def api(isbn):
+    print("API isbn: ", isbn)
+    result = getInfo(isbn)
+
+    result = {
+        "title": result[1],
+        "author": result[0],
+        "year": result[2],
+        "isbn": result[3],
+        "review_count": result[-2],
+        "average_score": result[-1]
+    }
+
+    return render_template("api.html", result=result)
 
 
 class Login(Form):

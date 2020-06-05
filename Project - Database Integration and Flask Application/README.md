@@ -8,6 +8,6 @@ Using Flask and Python as my backend, I was able to build a system that allowed 
 
 Once they log in, they will be able to search for books, leave reviews for individual books, and see the reviews made by other people. I integrated a third-party API by Goodreads, another book review website, to pull in ratings from a broader audience. This part of the project was so much fun. I am an avid reader and I was planning on integrating a book recommender system into my website. This project gave me an excellent resource to get started on implementing a database as the foundation of this system.
 
-Finally, users will be able to query for book details and book reviews programmatically via my website’s API. Essentially, I created a very simple GET call API to allow users to access book review information using an ISBN. The ISBN is an internationally recoginzed unique identifier for all books.
+Finally, users will be able to query for book details and book reviews programmatically via my website’s API. Essentially, I created a very simple GET call API to allow users to access book review information using an ISBN. The ISBN is an internationally recognized unique identifier for all books.
 
 Once I'm satisfied with the look and feel of the website, I would be happy to host it on shuaibr.github.io

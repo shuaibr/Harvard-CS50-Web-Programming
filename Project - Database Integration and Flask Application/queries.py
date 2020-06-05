@@ -7,14 +7,16 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 # cur.execute("""DROP TABLE users""")
 
+cur.execute("CREATE TABLE reviews (review_id SERIAL PRIMARY KEY, username varchar (20) NOT NULL, id integer, review varchar (255), date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP)")
+
 # cur.execute("""CREATE TABLE users (id SERIAL PRIMARY KEY, username varchar(20) NOT NULL, password varchar(20) NOT NULL)""")
 # insert_query = "INSERT INTO users  (username, password) VALUES ('admin','123passhaha')"
 # cur.execute(insert_query)
 # # print("pr1: ", cur.fetchall())
 # insert_query = "INSERT INTO users  (username, password) VALUES ('mikewaz','testpass')"
 # cur.execute(insert_query)
-cur.execute("""SELECT * from users """)
-print("pritn2 ", cur.fetchall())
+# cur.execute("""SELECT * from users """)
+# print("pritn2 ", cur.fetchall())
 
 conn.commit()
 # cur.execute("""

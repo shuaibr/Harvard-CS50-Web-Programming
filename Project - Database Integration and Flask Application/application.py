@@ -5,12 +5,13 @@ import xml.etree.ElementTree as ET
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
 from flask_session import Session
-from flask import Flask, redirect, url_for,  session, session, g, request, render_template, request, flash
+from flask import Flask, redirect, url_for,  session, g, request, render_template, request, flash
 import os
 import psycopg2
 import requests
 import datetime
 import gc
+from flask_login import LoginManager, UserMixin, current_user, login_user
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 from functools import wraps
 
@@ -28,14 +29,14 @@ if not os.getenv("DATABASE_URL"):
 app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
 # app = Flask(__name__)
-# app.permanent_session_lifetime = datetime.timedelta(days=365)
+app.permanent_session_lifetime = datetime.timedelta(days=365)
 Session(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-SECRET_KEY = os.urandom(32)
+SECRET_KEY = "goopy"
 app.config['SECRET_KEY'] = SECRET_KEY
 
 
@@ -88,7 +89,7 @@ def login():
         print("dB connected")
 
         if request.method == "POST" and form.validate():
-            data = cur.execute(
+            cur.execute(
                 "SELECT * FROM users WHERE username = '{0}'".format(username))
             check = cur.fetchone()
             print("login check: ", check)
@@ -101,11 +102,12 @@ def login():
                 session['username'] = username
                 print("success!",
                       session['username'], session['logged_in'])
+                session.modified = True
 
-                return redirect(url_for('index'))
+                return render_template("index.html")
             else:
-                print("invalid password!")
-                msg = "Invalid password, try again!"
+                print("invalid credentials!")
+                msg = "Invalid credentials, try again!"
 
             cur.close()
             conn.close()
@@ -139,7 +141,7 @@ def registration():
                 "host=ec2-52-207-25-133.compute-1.amazonaws.com dbname=    dc4ua1h8pt5m05 user=pxondfbtekevjh password=eb9a343232a10bb904c71b3c94669edcaad8f15e77796d4e9f47543b885ed875")
             cur = conn.cursor()
             print("Connected, attempting to query username")
-            x = cur.execute(
+            cur.execute(
                 "SELECT * FROM users WHERE username = '{0}'".format(username))
             # print("username exists check: ", x, cur.fetchall())
             check = cur.fetchall()
@@ -157,8 +159,9 @@ def registration():
 
                 session['logged_in'] = True
                 session['username'] = username
+                session.modified = True
 
-                return redirect(url_for('index'))
+                return render_template("registration.html")
         return render_template("registration.html", form=form, error_message="Register before logging in!")
 
     except Exception as e:
@@ -228,6 +231,7 @@ def bookpage():
     isbn_res = requests.get("https://www.goodreads.com/book/show.xml", params={
                             "key": "BgzQ9doaTztk9S8YBTVefg", "id": str(info)})
     iroot = ET.fromstring(isbn_res.content)
+    print("iRoot: ", iroot)
     isbn = iroot[1][3].text
     title = iroot[1][1].text
     pub_year = iroot[1][10].text
@@ -236,7 +240,26 @@ def bookpage():
     avg_ratings = iroot[1][18].text
     img = iroot[1][8].text
 
-    result = [author, title, pub_year, isbn, num_ratings, avg_ratings, img]
-    print("RESULT: ", result)
+    result = [author, title, pub_year, isbn,
+              num_ratings, avg_ratings, img, info]
 
-    return render_template("/bookpage.html", search=search, book_info=result)
+    conn = psycopg2.connect(
+        "host=ec2-52-207-25-133.compute-1.amazonaws.com dbname=    dc4ua1h8pt5m05 user=pxondfbtekevjh password=eb9a343232a10bb904c71b3c94669edcaad8f15e77796d4e9f47543b885ed875")
+    cur = conn.cursor()
+
+    if request.method == "POST":
+        username = session.get('username')
+        comment = request.form.get("comment")
+        rating = request.form.get("rating")
+        print(username, comment, rating, isbn)
+        if comment != None and rating != None:
+            cur.execute(
+                "INSERT INTO reviews (username, review, isbn, ratings) VALUES ('{0}','{1}','{2}','{3}')".format(username, comment, isbn, rating))
+            conn.commit()
+    print("Connected, attempting to query reviews")
+    cur.execute(
+        "SELECT * FROM reviews")
+    # print("username exists check: ", x, cur.fetchall())
+    reviews = cur.fetchall()
+    print("RESULT: ", reviews)
+    return render_template("/bookpage.html", search=search, book_info=result, comments=reviews)

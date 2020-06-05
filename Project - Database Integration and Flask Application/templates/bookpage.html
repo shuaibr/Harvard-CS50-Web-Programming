@@ -38,105 +38,108 @@ endblock %} {% block body %}
           <div class="card-body text-center">
             <h4 class="card-title">Latest Comments</h4>
           </div>
+          {% for comment in comments %}
           <div class="comment-widgets">
             <!-- Comment Row -->
+
             <div class="d-flex flex-row comment-row m-t-0 px-4">
               <div class="comment-text w-100 p-2">
-                <h6 class="font-medium">James Thomas</h6>
-                <span class="m-b-15 d-block"
-                  >This is an awesome book. I would love to read it again.
-                </span>
+                <h6 class="font-medium">{{comment[1]}}</h6>
+                <span class="m-b-15 d-block">{{comment[2] }}</span>
                 <div class="comment-footer">
-                  <span class="text-muted float-right">April 14, 2019</span>
+                  <span class="text-muted float-right"
+                    >{{comment[3].strftime('%Y-%m-%d')}}</span
+                  >
                 </div>
               </div>
             </div>
-            <div class="container-sm p-4">
-              <button
-                type="button"
-                class="btn btn-danger"
-                data-toggle="modal"
-                data-target="#form"
-              >
-                Add your review!
-              </button>
-              <div
-                class="modal fade"
-                id="form"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="exampleModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                    <div class="text-right cross">
-                      <i class="fa fa-times mr-2"></i>
-                    </div>
-                    <div class="card-body text-center">
-                      <form
-                        class="comment-box text-center"
-                        method="POST"
-                        action="{{url_for('bookpage')}}"
-                      >
-                        <h4>Add a comment</h4>
-                        <div class="rating text-weight-lighter">
-                          <input
-                            class="pr-1"
-                            type="radio"
-                            name="rating"
-                            value="5"
-                            id="5"
-                          /><label for="5">5</label>
-                          <input
-                            class="pr-1"
-                            type="radio"
-                            name="rating"
-                            value="4"
-                            id="4"
-                          /><label for="4">4</label>
-                          <input
-                            class="pr-1"
-                            type="radio"
-                            name="rating"
-                            value="3"
-                            id="3"
-                          /><label for="3">3</label>
-                          <input
-                            class="pr-1"
-                            type="radio"
-                            name="rating"
-                            value="2"
-                            id="2"
-                          /><label for="2">2</label>
-                          <input
-                            class="pr-1"
-                            type="radio"
-                            name="rating"
-                            value="1"
-                            id="1"
-                          /><label for="1">1</label>
-                        </div>
-                        <div class="comment-area">
-                          <textarea
-                            class="form-control"
-                            name="comment"
-                            placeholder="What are your thoughts?"
-                            rows="4"
-                          ></textarea>
-                        </div>
-                        <div class="text-center mt-4">
-                          <button
-                            class="btn btn-success send px-5"
-                            name="info"
-                            value="{{book_info[-1]}}"
-                          >
-                            Send message
-                            <i class="fa fa-long-arrow-right ml-1"></i>
-                          </button>
-                        </div>
-                      </form>
-                    </div>
+          </div>
+          {% endfor %}
+          <div class="container-sm p-4">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-toggle="modal"
+              data-target="#form"
+            >
+              Add your review!
+            </button>
+            <div
+              class="modal fade"
+              id="form"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="text-right cross">
+                    <i class="fa fa-times mr-2"></i>
+                  </div>
+                  <div class="card-body text-center">
+                    <form
+                      class="comment-box text-center"
+                      method="POST"
+                      action="{{url_for('bookpage')}}"
+                    >
+                      <h4>Add a comment</h4>
+                      <div class="rating text-weight-lighter">
+                        <input
+                          class="pr-1"
+                          type="radio"
+                          name="rating"
+                          value="5"
+                          id="5"
+                        /><label for="5">5</label>
+                        <input
+                          class="pr-1"
+                          type="radio"
+                          name="rating"
+                          value="4"
+                          id="4"
+                        /><label for="4">4</label>
+                        <input
+                          class="pr-1"
+                          type="radio"
+                          name="rating"
+                          value="3"
+                          id="3"
+                        /><label for="3">3</label>
+                        <input
+                          class="pr-1"
+                          type="radio"
+                          name="rating"
+                          value="2"
+                          id="2"
+                        /><label for="2">2</label>
+                        <input
+                          class="pr-1"
+                          type="radio"
+                          name="rating"
+                          value="1"
+                          id="1"
+                        /><label for="1">1</label>
+                      </div>
+                      <div class="comment-area">
+                        <textarea
+                          class="form-control"
+                          name="comment"
+                          placeholder="What are your thoughts?"
+                          rows="4"
+                        ></textarea>
+                      </div>
+                      <div class="text-center mt-4">
+                        <button
+                          class="btn btn-success send px-5"
+                          name="info"
+                          value="{{book_info[-1]}}"
+                        >
+                          Send message
+                          <i class="fa fa-long-arrow-right ml-1"></i>
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>

@@ -252,14 +252,17 @@ def bookpage():
         comment = request.form.get("comment")
         rating = request.form.get("rating")
         print(username, comment, rating, isbn)
-        if comment != None and rating != None:
+        if username == None:
+            flash("You must log in before leaving a review!")
+
+        if username != None and comment != None and rating != None:
             cur.execute(
                 "INSERT INTO reviews (username, review, isbn, ratings) VALUES ('{0}','{1}','{2}','{3}')".format(username, comment, isbn, rating))
             conn.commit()
     print("Connected, attempting to query reviews")
     cur.execute(
-        "SELECT * FROM reviews")
+        "SELECT * FROM reviews WHERE isbn = '{0}'".format(isbn))
     # print("username exists check: ", x, cur.fetchall())
     reviews = cur.fetchall()
-    print("RESULT: ", reviews)
+    # print("RESULT: ", reviews)
     return render_template("/bookpage.html", search=search, book_info=result, comments=reviews)

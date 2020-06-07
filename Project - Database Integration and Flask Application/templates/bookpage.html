@@ -10,7 +10,7 @@ endblock %} {% block body %}
             <h4><strong>Book Title: </strong> {{book_info[1]}}</h4>
             <p><strong>Author:</strong> {{book_info[0]}}</p>
             <p><strong>Date Published: </strong> {{book_info[2]}}</p>
-            <p><strong>ISBN: </strong> {{book_info[3]}}</p>
+            <p><strong>ISBN: </strong>{{book_info[3]}}</p>
           </div>
         </div>
       </div>
@@ -44,7 +44,12 @@ endblock %} {% block body %}
 
             <div class="d-flex flex-row comment-row m-t-0 px-4">
               <div class="comment-text w-100 p-2">
-                <h6 class="font-medium">{{comment[1]}}</h6>
+                <h6 class="font-weight-bold">
+                  {{comment[1]}}
+                </h6>
+                <span class="font-weight-bold float-right">
+                  Rating: {{comment[-1]}}/5</span
+                >
                 <span class="m-b-15 d-block">{{comment[2] }}</span>
                 <div class="comment-footer">
                   <span class="text-muted float-right"

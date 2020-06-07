@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>My Website!</title>
+    <title>shuaibreeyaz</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="main.css" />
@@ -80,7 +80,17 @@
     <!-- Main -->
     <p class="container mx-md-n5 "><h1 class = "px-md-5 font-weight-light text-center">{%block heading %} {% endblock %}</h1></p>
     <div class="container">
-        <h3>{{session['username']}}</h3>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+               {% for message in messages %}
+                <div class="message_flash">{{ message }}</div>
+               {% endfor %}
+           </ul>
+         {% endif %}
+        {% endwith %}
+
+        
       {% block body %} {% endblock %}
     </div>
 
